@@ -53,13 +53,31 @@ const getWeekStart = (ref = new Date()) => {
 
 const EMPTY_TMPL = { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[] };
 
+// ── localStorage helpers ────────────────────────────────────────────────────
+const load = (key, fallback) => {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch { return fallback; }
+};
+const save = (key, val) => {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+};
+const usePersist = (key, initial) => {
+  const [state, setState] = useState(() => load(key, initial));
+  const set = val => setState(prev => {
+    const next = typeof val === 'function' ? val(prev) : val;
+    save(key, next);
+    return next;
+  });
+  return [state, set];
+};
+
 export default function DailyPlanner() {
   const [tab,      setTab]      = useState('tracker');
   const [planDay,  setPlanDay]  = useState(tIdx());
-  const [template, setTemplate] = useState(EMPTY_TMPL);
-  const [extras,   setExtras]   = useState({});
-  const [dones,    setDones]    = useState({});
-  const [skips,    setSkips]    = useState({});
+  const [template, setTemplate] = usePersist('dp_template', EMPTY_TMPL);
+  const [extras,   setExtras]   = usePersist('dp_extras',   {});
+  const [dones,    setDones]    = usePersist('dp_dones',     {});
+  const [skips,    setSkips]    = usePersist('dp_skips',     {});
   const [addModal,   setAddModal]   = useState(null);
   const [skipModal,  setSkipModal]  = useState(null);
   const [skipReason, setSkipReason] = useState('');
