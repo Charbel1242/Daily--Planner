@@ -1,0 +1,10 @@
+{
+  "name": "Daily Planner",
+  "short_name": "Planner",
+  "description": "Your personal weekly planner and tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090f",
+  "theme_color": "#09090f",
+  "orientation": "portrait"
+}
